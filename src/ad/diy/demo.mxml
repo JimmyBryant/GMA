@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" applicationComplete="loadXML()">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		@namespace mx "library://ns.adobe.com/flex/mx";
+		s|Button#closeBtn{
+			skinClass: ClassReference("skins.close");
+		}
+	</fx:Style>	 
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.controls.Image;
+			
+			private var str:String='http://googleads.g.doubleclick.net/pagead/ads?ad_type=flash_image_text_video&adsafe=high&channel=Overlay%2BGclidTrueView&client=ca-video-pub-6344824857170504&correlator=1368105534602&dt=1368105534633&ea=0&flash=11.7.700.169&frm=0&image_size=728x90%2C480x70%2C468x60%2C450x50%2C336x280%2C300x250%2C250x250%2C200x200&max_ad_duration=110000&num_ads=3&output=xml_vast2&sdkv=3.0.60&sz=1600x462&t_pyv=allow&u_ah=860&u_asa=1&u_aw=1600&u_cd=24&u_h=900&u_his=1&u_java=false&u_nmime=31&u_nplug=28&u_tz=480&u_w=1600&unviewed_position_start=1&url=http%3A%2F%2Fgithub.ikugua.com%2FGMA%2Fbin-debug%2Foverlay.html%3Fdebug%3Dtrue&video_format=18&video_product_type=0&video_url_to_fetch=http%3A%2F%2Fgithub.ikugua.com%2FGMA%2Fbin-debug%2Foverlay.html%3Fdebug%3Dtrue&videoad_start_delay=1';
+			private function loadXML():void{
+				Security.allowDomain("*");
+				var loader:XMLLoader=new XMLLoader(str);
+				loader.addEventListener(XMLEvent.Loaded,analyseXML);
+				loader.load();				
+			}
+			private function analyseXML(e:Event):void{
+				var xml:XML=e.target.XMLDocs;
+
+				var Ad:XMLList=xml.Ad[0].InLine,
+					type:String=Ad.AdTitle,
+					NonLinearAds:XMLList=Ad.Creatives[0].Creative[0].NonLinearAds;
+				if(type==='image'||'flash'){
+					var image:Image = new Image();
+					var redirectUrl:String = NonLinearAds.NonLinear[0].NonLinearClickThrough;
+					image.source=NonLinearAds.NonLinear[0].StaticResource ;
+					image.buttonMode=true;
+					image.addEventListener(MouseEvent.CLICK,function():void{
+						var urlRequest:URLRequest=new URLRequest(redirectUrl);
+						navigateToURL(urlRequest,'_blank');
+					});
+//					adgroup.addElement(image);
+				}
+			}
+		]]>
+	</fx:Script>
+		
+	<s:layout>
+		<s:HorizontalLayout horizontalAlign="center" verticalAlign="middle">
+			
+		</s:HorizontalLayout>
+	</s:layout>
+	
+	<s:VGroup>
+		<s:HGroup>
+			<s:Button label="加载XML" click="loadXML()" skinClass="spark.skins.spark.DefaultButtonSkin">
+				
+			</s:Button>
+		</s:HGroup>
+	</s:VGroup>
+
+
+</s:Application>

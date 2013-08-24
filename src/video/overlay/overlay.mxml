@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" applicationComplete="appCompleteHandler()">
+	<fx:Style source="overlay.css"/>
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import com.web.VideoOverlay;
+		    private var Overlay:VideoOverlay;
+			private function appCompleteHandler():void{
+				Security.allowDomain("*");
+				Overlay=new VideoOverlay(container);
+				button_close.addEventListener(MouseEvent.CLICK,function():void{
+					ExternalInterface.call('Instreet_destroy_ad');
+				});
+			}
+		]]>
+	</fx:Script>
+	<s:BorderContainer id="container" x="0" y="0" width="100%" height="100%"  borderVisible="false">
+		
+		<s:HGroup>
+			<s:Label id="loading_text" color="#666666" fontStyle="normal" fontWeight="bold"
+					 name="loading_text" paddingLeft="15" paddingTop="15" text="广告加载中...">
+				
+			</s:Label>
+		</s:HGroup>
+		<s:Group id="click_group" right="0" top="0" width="40" height="30" clipAndEnableScrolling="true">				
+			<s:Button id="button_close" right="4" top="4" width="33" height="22" label="×"
+					  chromeColor="#FFFFFF" color="#000000" cornerRadius="3" focusColor="#FBFBFB"
+					  fontFamily="Arial" fontSize="20">
+				
+			</s:Button>
+		</s:Group>
+	</s:BorderContainer>
+</s:Application>

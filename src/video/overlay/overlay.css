@@ -1,0 +1,13 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+
+
+global
+{
+	font-weight: normal;
+	font-style: normal;
+	text-align: left;
+	vertical-align: middle;
+}
+	
