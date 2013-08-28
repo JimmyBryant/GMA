@@ -20,6 +20,7 @@ package com.web
 	import mx.controls.Alert;
 	import mx.controls.Label;
 	import mx.core.FlexGlobals;
+	import mx.core.UIComponent;
 	
 	import spark.components.BorderContainer;
 	import spark.components.Group;
@@ -37,14 +38,15 @@ package com.web
 		private var application:Object=FlexGlobals.topLevelApplication;
 		private var parameters:Object=application.parameters;
 		private var width:int,height:int;
-		private var click_prob:Number=parameters.click_prob||0;
+		private var clickProb:Number=parameters.clickProb||0;
 		private var rdNumber:Number=Math.random();
 		private var isFirstAd:Boolean=true;
+		private var backColor:uint=parameters.backColor||0xffffff;
 		public function VideoOverlay(container:BorderContainer)
 		{
 			Container=container;
 			requestAds();
-			if(rdNumber<click_prob){
+			if(rdNumber<clickProb){
 				requestAds();
 			}
 		}
@@ -68,10 +70,10 @@ package com.web
 			var adsRequest:AdsRequest = new AdsRequest();
 			//拼接adTagUrl			
 			var ad_type:String=parameters.ad_type||'video_image_flash';
-			var client:String=parameters.pubID||'ca-video-pub-0869844596169425';
+			var client:String=parameters.pubID||'ca-video-pub-2797343905023050';
 			var description_url:String=parameters.descriptionUrl||encodeURIComponent(ExternalInterface.call("window.location.href.toString"));
-			var slotname:String=parameters.slotname||'';
-			var channel:String='';
+			var slotname:String='';
+			var channel:String=parameters.slot||'7029323126';
 			var adTagUrl:String='http://googleads.g.doubleclick.net/pagead/ads?client='
 				+client+'&ad_type='				
 				+ad_type+'&description_url='				
@@ -118,17 +120,10 @@ package com.web
 				adsManager.addEventListener(AdErrorEvent.AD_ERROR,adsManagerPlayErrorHandler);
 				adsManager.addEventListener(AdEvent.USER_CLOSED,adClosedHandler);
 
-				// 如果您的视频播放器支持指定的 VPAID 广告版本，则在
-				// 此版本中进行传递。如果您的视频播放器不支持 VPAID 广告，
-				// 则只在 1.0 版本中进行传递。
 				adsManager.handshakeVersion("1.0");
-			/*	var newUiElements:Array = [UiElements.COUNTDOWN,
-					UiElements.AD_ATTRIBUTION];
-				adsManager.uiElements = newUiElements;*/
-				// 为使 VMAP 广告正常工作，应先调用 Init，
-				// 然后再播放内容。
+
 				if(isFirstAd){
-					adsManager.init(Container.width,Container.height,ViewModes.NORMAL);				
+					adsManager.init(Container.width,Container.height,ViewModes.NORMAL);		
 					var flexAdContainer:SpriteVisualElement = new SpriteVisualElement();
 					flexAdContainer.addChild(adsManager.adsContainer);
 					Container.addElementAt(flexAdContainer,0);
@@ -177,6 +172,16 @@ package com.web
 		 * 广告加载完成后隐藏loading_text
 		*/
 		private function adLoadedHandler(event:AdEvent):void{
+			var myad:Ad=event.ad as Ad;
+			var x:Number=(Container.width-myad.width)/2,
+				y:Number=(Container.height+myad.height)/2-5;
+			var cover:Sprite=new Sprite();	//遮盖谷歌标识
+			var ui:UIComponent=new UIComponent();
+			cover.graphics.beginFill(backColor,1);
+			cover.graphics.drawRect(x,y,myad.width,10);
+			cover.graphics.endFill();
+			ui.addChild(cover);
+			Container.addElement(ui);
 			adsManager.uiElements=[UiElements.AD_ATTRIBUTION];	
 			FlexGlobals.topLevelApplication['loading_text'].visible=false;		
 		}
@@ -184,8 +189,7 @@ package com.web
 		 * 如果广告已开始，AdsManager 将引发此事件。
 		 **/
 		private function startedHandler(event:AdEvent):void {
-			var ad:Ad=event.ad;		
-//			Alert.show(adsManager.uiElements.toString())
+	
 		}
 		
 		/**
@@ -205,9 +209,9 @@ package com.web
 		
 		private function adClickedHandler(event:AdEvent):void{	//点击广告时的处理事件
 			
-			var am:AdsManager=event.target as AdsManager;
-			Alert.show('AdsManager的adContainer'+application.click_group.numElements);
+			var am:AdsManager=event.target as AdsManager;			
 			application.click_group.removeElement(am.adsContainer.parent);
+			ExternalInterface.call('Instreet_Close_Ad');	//关闭广告
 
 		}
 	}

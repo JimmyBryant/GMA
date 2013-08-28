@@ -14,7 +14,7 @@
 				Security.allowDomain("*");
 				Overlay=new VideoOverlay(container);
 				button_close.addEventListener(MouseEvent.CLICK,function():void{
-					ExternalInterface.call('Instreet_destroy_ad');
+					ExternalInterface.call('Instreet_Close_Ad');
 				});
 			}
 		]]>
@@ -27,12 +27,13 @@
 				
 			</s:Label>
 		</s:HGroup>
-		<s:Group id="click_group" right="0" top="0" width="40" height="30" clipAndEnableScrolling="true">				
-			<s:Button id="button_close" right="4" top="4" width="33" height="22" label="×"
+		<s:Group id="click_group" right="0" top="0" width="30" height="30" clipAndEnableScrolling="true">				
+			<s:Button buttonMode="true" id="button_close" right="2" top="2" width="20" height="20" label="×"
 					  chromeColor="#FFFFFF" color="#000000" cornerRadius="3" focusColor="#FBFBFB"
-					  fontFamily="Arial" fontSize="20">
+					  fontFamily="Arial" fontSize="20" skinClass="skins.close">
 				
 			</s:Button>
 		</s:Group>
 	</s:BorderContainer>
+
 </s:Application>
